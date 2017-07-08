@@ -1,0 +1,6 @@
+.envrc
+*.pyc
+node_modules
+assets/webpack_bundles
+webpack-stats.json
+.cache
