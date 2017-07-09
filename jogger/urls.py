@@ -18,6 +18,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^auth/', include('rest_auth.urls')),
-    url(r'^', include('jogs.urls')),
+    url(r'^api/auth/', include('rest_auth.urls')),
+    url(r'^api/auth/register', include('rest_auth.registration.urls')),
+    url(r'^api/', include('api.urls')),
+    url(r'^', include('app.urls')),
 ]

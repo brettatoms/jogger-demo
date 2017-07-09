@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_extensions.db.models import TimeStampedModel
 
 
-class Jog(models.Model):
+class Jog(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # the date the jog occured
@@ -13,3 +14,6 @@ class Jog(models.Model):
 
     # how long the jog took in seconds
     time_in_seconds = models.IntegerField()
+
+    class Meta:
+        ordering = ('created',)

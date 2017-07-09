@@ -6,8 +6,8 @@ import os
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -20,22 +20,26 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    'jogs.apps.JogsConfig',
+    'allauth',
+    'allauth.account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'django_extensions',
+    'app.apps.AppConfig',
+    'api.apps.ApiConfig',
+    'rest_auth',
+    'rest_auth.registration',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
-    'webpack_loader'
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -68,32 +72,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jogger.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
-}
-
+DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -108,15 +111,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'assets'), )
 
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -130,13 +130,17 @@ WEBPACK_LOADER = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-    ],
-    'PAGE_SIZE': 20
+    'DEFAULT_AUTHENTICATION_CLASSES':
+    ('rest_framework.authentication.TokenAuthentication', ),
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAdminUser'],
+    'PAGE_SIZE':
+    20
 }
 
 REST_AUTH_SERIALIZERS = {
     # 'LOGIN_SERIALIZER': 'path.to.custom.LoginSerializer',
     # 'TOKEN_SERIALIZER': 'path.to.custom.TokenSerializer',
 }
+
+SITE_ID = 1  # needed for auth registration
+APPEND_SLASH = False

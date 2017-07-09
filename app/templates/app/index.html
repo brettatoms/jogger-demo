@@ -20,16 +20,15 @@
         <!--[if lt IE 9]>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
         <![endif]-->
+        {% render_bundle 'main' 'css' %}
 
     </head>
 
     <body>
-        <h1>Joggr</h1>
-        <div id="app">
-           {{ message }}
+        <div id="root">
+            <app v-cloak></app>
         </div>
 
-        {% render_bundle 'main' %}
-
+        {% render_bundle 'main' 'js' %}
     </body>
 </html>

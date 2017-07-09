@@ -4,3 +4,4 @@ node_modules
 assets/webpack_bundles
 webpack-stats.json
 .cache
+__pycache__
