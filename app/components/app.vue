@@ -1,9 +1,22 @@
 <template>
     <div class="grid-container">
-        <div class="top-bar" v-if="hasToken()">
-            Joggr
+        <div class="grid-x">
+            <div class="app-grid-cell medium-6 medium-offset-3 cell">
+                <div class="top-bar" v-if="hasToken()">
+                    <div class="top-bar-left">
+                        Joggr
+                    </div>
+                    <div class="top-bar-right">
+                        <ul class="menu">
+                            <li>
+                                <a class="logout-button clear button" href="#0" @click="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <router-view></router-view>
+            </div>
         </div>
-        <router-view></router-view>
     </div>
 </template>
 
@@ -14,15 +27,25 @@
      methods: {
          hasToken() {
              return !!localStorage.getItem('token')
+         },
+         logout() {
+             localStorage.removeItem('token')
+             this.$router.replace('/login')
          }
      }
  }
 </script>
 
-<style>
+<style lang="scss" scoped>
+ .app-grid-cell {
+     border: solid 1px #ccc
+ }
+
  .top-bar {
-     text-align: center;
      background: #f9f9f9;
-     padding: 8px 0;
+
+     .menu {
+         background: transparent;
+     }
  }
 </style>

@@ -48,9 +48,13 @@
  }
 </script>
 
-<style>
+<style lang="scss" scoped>
  .login-container {
      margin-top: 100px;
+
+     .card {
+         padding: 20px;
+     }
  }
 
  .button {
