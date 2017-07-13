@@ -1,7 +1,7 @@
 <template>
     <div>
-        <router-link to="/add">Add Jog</router-link>
-        <table class="jog-table">
+        <router-link to="/add" v-if="formattedJogs.length">Add Jog</router-link>
+        <table class="jog-table" v-if="formattedJogs.length">
             <thead>
                 <tr>
                     <th><a @click="sortBy('date')">Date</a></th>
@@ -9,12 +9,15 @@
                     <th><a @click="sortBy('time')">Time</a></th>
                 </tr>
             </thead>
-            <tr class="jog-row"v-for="jog in formattedJogs">
+            <tr class="jog-row" v-for="jog in formattedJogs">
                 <td>{{ jog.date }}</td>
                 <td>{{ jog.distance_in_feet }}</td>
                 <td>{{ jog.time_in_seconds }}</td>
             </tr>
         </table>
+        <div class="empty-state" v-if="!formattedJogs.length">
+            <router-link to="/add" class="button">Add Jog</router-link>
+        </div>
     </div>
 </template>
 
@@ -104,5 +107,10 @@
      th {
          text-align: left;
      }
+ }
+
+ .empty-state {
+     text-align: center;
+     margin: 20px;
  }
 </style>

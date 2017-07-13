@@ -14,6 +14,7 @@ class JogList(APIView):
     parser_classes = (JSONParser, )
 
     def get(self, request):
+        # get jogs for current user
         jogs = Jog.objects.filter(user=request.user)
         serializer = JogSerializer(jogs, many=True)
         return Response(serializer.data)

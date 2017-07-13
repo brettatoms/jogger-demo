@@ -9,7 +9,7 @@
                     <div class="top-bar-right">
                         <ul class="menu">
                             <li>
-                                <a class="logout-button clear button" href="#0" @click="logout()">Logout</a>
+                                <a class="logout-button clear button" @click="logout()">Logout</a>
                             </li>
                         </ul>
                     </div>

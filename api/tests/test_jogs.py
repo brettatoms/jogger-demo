@@ -1,8 +1,13 @@
 from datetime import date
 import json
 from random import randint
+import secrets
 
 from .fixtures import *  # noqa
+from ..models import Jog
+
+# TODO: make sure we only return jogs lists of the current user
+# TODO: make sure we can't delete a jog that belongs to someone else
 
 
 def test_get_jog_list(jog, api_client):
@@ -13,9 +18,6 @@ def test_get_jog_list(jog, api_client):
     assert data[0]['id'] == jog.id
     assert data[0]['distance_in_feet'] == jog.distance_in_feet
     assert data[0]['time_in_seconds'] == jog.time_in_seconds
-
-
-# TODO: make sure we only return jogs lists of the current user
 
 
 def test_get_empty_jog_list(api_client):
@@ -29,6 +31,23 @@ def test_get_jog_detail(api_client, jog):
     data = json.loads(response.content)
     assert response.status_code == 200, data
     assert data['id'] == jog.id
+
+
+def test_get_jog_detail_permissions_fail(django_user_model, api_client):
+    password = secrets.token_urlsafe(8)
+    user2 = django_user_model.objects.create_user(
+        username='testy2', password=password)
+    today = date.today()
+    jog2 = Jog(
+        user=user2,
+        date='{}-{}-{}'.format(today.year, today.month, today.day),
+        distance_in_feet=randint(0, 1000),
+        time_in_seconds=randint(0, 1000))
+    jog2.save()
+
+    response = api_client.get('/api/jogs/{}/'.format(jog2.id))
+    data = json.loads(response.content)
+    assert response.status_code == 404, data
 
 
 def test_post_jog(api_client):
@@ -72,6 +91,3 @@ def test_delete_jog(api_client, jog):
 def test_fail_delete_missing_jog(api_client):
     response = api_client.delete('/api/jogs/{}/'.format(randint(1, 1000)))
     assert response.status_code == 404
-
-
-# TODO: make sure we can't delete a jog that belongs to someone else

@@ -1,21 +1,36 @@
 <template>
     <div class="login-container grid-container">
         <div class="grid-x">
-            <div class="small-4 small-offset-4 cell">
-                <div class="card">
-                    <form id="login-form" @keyup.13="login()">
-                        <label>Username
-                            <input type="text" name="username" />
-                        </label>
-                        <label>Password
-                            <input type="password" name="password" />
-                        </label>
+            <div class="small-10 small-offset-1 cell">
+                <form id="login-form" @keyup.13="login()">
+                    <label>Username
+                        <input type="text" name="username" v-model="username"/>
+                        <p
+                            v-for="msg in errors['username']"
+                            class="error-message help-text"
+                        >{{ msg }}</p>
+                    </label>
 
-                        <a class="login-button button" @click="login()">Login</a>
-                        <router-link to="/signup " class="signup-button clear button">Sign up</router-link>
-                    </form>
-
-                </div>
+                    <label>Password
+                        <input type="password" name="password" v-model="password"/>
+                        <p
+                            v-for="msg in errors['password']"
+                            class="error-message help-text"
+                        >{{ msg }}</p>
+                    </label>
+                    <a class="forgot-password-link">Forgot your password?</a>
+                    <button
+                        class="login-button button"
+                        type="button"
+                        @click.prevent.stop="login()"
+                        :disabled="username && password ? false : true"
+                    >Login</button>
+                    <router-link to="/signup " class="signup-button clear button">Sign up</router-link>
+                </form>
+                <p
+                    v-for="msg in errors['non_field_errors']"
+                    class="error-message"
+                >{{ msg }}</p>
             </div>
         </div>
     </div>
@@ -23,25 +38,34 @@
 
 <script>
  export default {
+     data: function() {
+         return {
+             username: null,
+             password: null,
+             errors: {}
+         }
+     },
      methods: {
          login() {
+             // don't do anything if we don't have a username and password
+             if (!this.$data.username || !this.$data.password) return;
+
              var form = new FormData(document.getElementById('login-form'));
              fetch('/api/auth/login/', {
                  method: 'POST',
                  body: form
              }).then((response) => {
-                 return response.json().then(data => [response, data])
+                 return response.json().then((data) => [response, data])
              }).then((response_data) => {
                  const [response, data] = response_data
-                 console.log(`data: ${data}`)
                  if (response.status === 200) {
                      localStorage.setItem('token', data['key'])
                      this.$router.replace('/')
                  } else {
-                     // TODO: handle error
+                     this.$data.errors = data;
                  }
              }).catch((err) => {
-                 // TODO: handle error
+                 this.$data.errors['non_field_errors'] = 'Unknown error';
              })
          }
      }
@@ -50,14 +74,29 @@
 
 <style lang="scss" scoped>
  .login-container {
-     margin-top: 100px;
+     margin-top: 20px;
+ }
 
-     .card {
-         padding: 20px;
-     }
+ input[name=password] {
+     margin-bottom: 0;
+ }
+
+ .forgot-password-link {
+     display: block;
+     font-size: 12px;
+     width: 100%;
+     text-align: right;
+ }
+
+ .login-button {
+     margin-top: 28px;
  }
 
  .button {
      width: 100%;
+ }
+
+ .error-message {
+     color: red;
  }
 </style>
