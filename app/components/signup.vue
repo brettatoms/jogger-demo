@@ -73,7 +73,7 @@
                      this.$data.errors = data;
                  }
              }).catch((err) => {
-                 this.$data.errors['non_field_errors'] = 'Unknown error';
+                 this.$data.errors['non_field_errors'] = 'Unknown error'
              })
          }
      }

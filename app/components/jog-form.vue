@@ -36,7 +36,7 @@
  import Pikaday from 'pikaday'
 
  export default {
-    data: function() {
+     data: function() {
          return {
              date: null,
              timeInSeconds: null,
@@ -44,14 +44,14 @@
          }
      },
 
-    mounted() {
-        this._jogDatePicker = new Pikaday({
-            field: this.$refs.jogDateInput,
-            onSelect: (date) => {
-                this.$data.date = date
-            }
-        })
-    },
+     mounted() {
+         this._jogDatePicker = new Pikaday({
+             field: this.$refs.jogDateInput,
+             onSelect: (date) => {
+                 this.$data.date = date
+             }
+         })
+     },
 
      methods: {
          cancel() {
