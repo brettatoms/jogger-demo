@@ -1,1 +1,1 @@
-web: gunicorn jogger.wsgi
+web: gunicorn jogger.wsgi --log-file -
