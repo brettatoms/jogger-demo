@@ -29,8 +29,12 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "watch": "webpack --watch --config webpack.config.js"
+        "watch": "webpack --watch --config webpack.config.js",
+        "heroku-postbuild": "webpack --config webpack.config.js"
     },
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "engine": {
+        "node": "8.1.3"
+    }
 }
