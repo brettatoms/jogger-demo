@@ -34,7 +34,7 @@
     },
     "author": "",
     "license": "ISC",
-    "engine": {
+    "engines": {
         "node": "8.1.3"
     }
 }
