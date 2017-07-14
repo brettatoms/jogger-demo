@@ -18,29 +18,30 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['toptal-jogger.herokuapp.com']
+ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
-    'allauth',
-    'allauth.account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django_extensions',
-    'app.apps.AppConfig',
-    'api.apps.ApiConfig',
+    'allauth',
+    'allauth.account',
     'rest_auth',
     'rest_auth.registration',
     'rest_framework',
     'rest_framework.authtoken',
     'webpack_loader',
-]
+    'app.apps.AppConfig',
+    'api.apps.ApiConfig'
+]  # yapf: disable
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -117,6 +118,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'dist/static')]
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist/static')
@@ -141,7 +143,7 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH_SERIALIZERS = {
-    # 'LOGIN_SERIALIZER': 'path.to.custom.LoginSerializer',
+    'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
     # 'TOKEN_SERIALIZER': 'path.to.custom.TokenSerializer',
 }
 

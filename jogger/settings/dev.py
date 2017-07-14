@@ -2,4 +2,6 @@
 Development specific settings
 """
 
-from .base import * # noqa
+from .base import *  # noqa
+
+ALLOWED_HOSTS += ['localhost']
