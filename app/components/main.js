@@ -16,7 +16,7 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/signup', component: Signup },
     { path: '/', component: Jogs },
-    // { path: '/edit', component: Jogs }
+    { path: '/edit', component: JogForm },
     { path: '/add', component: JogForm }
 ]
 

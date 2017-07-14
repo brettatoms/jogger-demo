@@ -9,11 +9,13 @@
                     <th><a @click="sortBy('time')">Time</a></th>
                 </tr>
             </thead>
-            <tr class="jog-row" v-for="jog in formattedJogs">
-                <td>{{ jog.date }}</td>
-                <td>{{ jog.distance_in_feet }}</td>
-                <td>{{ jog.time_in_seconds }}</td>
-            </tr>
+            <tbody>
+                <tr class="jog-row" v-for="jog in formattedJogs" @click="editJog(jog)">
+                    <td>{{ jog.date }}</td>
+                    <td>{{ jog.distance_in_feet }}</td>
+                    <td>{{ jog.time_in_seconds }}</td>
+                </tr>
+            </tbody>
         </table>
         <div class="empty-state" v-if="!formattedJogs.length">
             <router-link to="/add" class="button">Add Jog</router-link>
@@ -46,7 +48,6 @@
          formattedJogs() {
              const direction = this.sortAsc ? ['asc', 'asc'] : ['desc', 'desc']
 
-             // use the sort key and the id so the sort is stable
              return orderBy(this.$store.state.jogs, (jog) => {
                  return this.sortKey === 'date' ?
                         new moment(jog.date, 'YYYY-MM-DD').valueOf() :
@@ -54,11 +55,11 @@
              }, direction)
                  .map((jog) => {
                      return {
+                         id: jog.id,
                          date: moment(jog.date).format('MMM, M, YYYY'),
                          distance_in_feet: jog.distance_in_feet,
                          time_in_seconds: jog.time_in_seconds
                      }
-
                  })
          }
      },
@@ -94,6 +95,13 @@
              }).catch((err) => {
                  // TODO: handle error
              })
+         },
+
+         editJog(jog) {
+             this.$router.push({
+                 path: '/edit',
+                 query: { id: jog.id }
+             })
          }
      }
  }
@@ -106,6 +114,25 @@
 
      th {
          text-align: left;
+     }
+
+     tbody {
+         tr {
+             &:hover {
+                 text-decoration: underline;
+                 cursor: pointer;
+                 background: #eee;
+             }
+
+             td {
+                 &:first-child {
+                     padding-left: 10px;
+                 }
+                 &:last-child {
+                     padding-right: 10px;
+                 }
+             }
+         }
      }
  }
 
