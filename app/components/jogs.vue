@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link to="/add" v-if="formattedJogs.length">Add Jog</router-link>
+        <router-link class="clear button" to="/add" v-if="formattedJogs.length">Add Jog</router-link>
         <table class="jog-table" v-if="formattedJogs.length">
             <thead>
                 <tr>
@@ -36,11 +36,6 @@
          }
      },
      beforeMount() {
-         const token = localStorage.getItem('token')
-         if (!token) {
-             return this.$router.replace('/login')
-         }
-
          this.loadJogs();
      },
 
@@ -82,19 +77,20 @@
          },
 
          loadJogs() {
-             const token = localStorage.getItem('token')
-             fetch('/api/jogs/', {
-                 headers: {
-                     'Authorization': `Token ${token}`
-                 }
-             }).then((response) => {
-                 return response.json().then(data => [response, data])
-             }).then((response_data) => {
-                 const [response, data] = response_data
-                 this.$store.state.jogs = data
-             }).catch((err) => {
-                 // TODO: handle error
-             })
+             this.$http.get('/api/jogs/')
+                 .then((response) => {
+                     return response
+                         .json()
+                         .then((data) => {
+                             this.$store.commit('setJogs', response.body)
+                     })
+                 }).catch((err) => {
+                     if (err.json) {
+                         err.json().then((data) => this.$data.errors = data)
+                     } else {
+                         this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                     }
+                 })
          },
 
          editJog(jog) {
@@ -109,11 +105,12 @@
 
 <style lang="scss" scoped>
  .jog-table {
-     margin-top: 12px;
      width: 100%;
 
-     th {
+
+     th, td {
          text-align: left;
+         padding-left: 10px;
      }
 
      tbody {
@@ -122,15 +119,6 @@
                  text-decoration: underline;
                  cursor: pointer;
                  background: #eee;
-             }
-
-             td {
-                 &:first-child {
-                     padding-left: 10px;
-                 }
-                 &:last-child {
-                     padding-right: 10px;
-                 }
              }
          }
      }

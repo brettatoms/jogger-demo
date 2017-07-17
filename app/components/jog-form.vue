@@ -94,8 +94,8 @@
                      this._jogDatePicker.setDate(data.date)
                  })
              }).catch((err) => {
-                 this.$data.errors = { 'non_field_errors': ['Unknown error'] }
                  console.log(err)
+                 this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
              })
          }
      },

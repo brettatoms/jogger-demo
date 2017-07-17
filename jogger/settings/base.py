@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
-    # 'TOKEN_SERIALIZER': 'path.to.custom.TokenSerializer',
+    'TOKEN_SERIALIZER': 'api.serializers.TokenSerializer',
 }
 
 SITE_ID = 1  # needed for auth registration

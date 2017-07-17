@@ -25,7 +25,7 @@
                         @click.prevent.stop="login()"
                         :disabled="username && password ? false : true"
                     >Login</button>
-                    <router-link to="/signup " class="signup-button clear button">Sign up</router-link>
+                    <router-link to="/signup" class="signup-button clear button">Sign up</router-link>
                 </form>
                 <p
                     v-for="msg in errors['non_field_errors']"
@@ -51,22 +51,23 @@
              if (!this.$data.username || !this.$data.password) return;
 
              var form = new FormData(document.getElementById('login-form'));
-             fetch('/api/auth/login/', {
-                 method: 'POST',
-                 body: form
-             }).then((response) => {
-                 return response.json().then((data) => [response, data])
-             }).then((response_data) => {
-                 const [response, data] = response_data
-                 if (response.status === 200) {
-                     localStorage.setItem('token', data['key'])
+             this.$http.post('/api/auth/login/', form)
+                 .then((response) => {
+                     return response.json().then((data) => [response, data])
+                 })
+                 .then((response_data) => {
+                     const [response, data] = response_data
+                     this.$store.commit('setToken', data.token)
+                     this.$store.commit('setCurrentUser', data.user)
                      this.$router.replace('/')
-                 } else {
-                     this.$data.errors = data;
-                 }
-             }).catch((err) => {
-                 this.$data.errors['non_field_errors'] = 'Unknown error';
-             })
+                 })
+                 .catch((err) => {
+                     if (err.json) {
+                         err.json().then((data) => this.$data.errors = data)
+                     } else {
+                         this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                     }
+                 })
          }
      }
  }

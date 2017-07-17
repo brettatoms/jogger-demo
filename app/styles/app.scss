@@ -50,13 +50,13 @@
 @include foundation-top-bar;
 // @include foundation-visibility-classes;
 // // @include foundation-float-classes;
-// @include foundation-flex-classes;
+@include foundation-flex-classes;
 
 // // @include foundation-prototype-classes;
 
 // @include motion-ui-transitions;
 // @include motion-ui-animations;
-
-h1 {
-    color: red;
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
 }

@@ -7,9 +7,26 @@
                         Joggr
                     </div>
                     <div class="top-bar-right">
-                        <ul class="menu">
+                        <ul
+                            v-dropdown-menu
+                            class="dropdown menu"
+                            data-dropdown-menu
+                            data-alignment="right"
+                            data-click-open="true"
+                        >
                             <li>
-                                <a class="logout-button clear button" @click="logout()">Logout</a>
+                                <a class="menu-text" href="">{{ currentUserName }}</a>
+                                <ul class="menu">
+                                    <li>
+                                        <router-link
+                                            :to="{ path: '/users/edit', query: { id: currentUserId }}"
+                                        >Profile</router-link>
+                                    </li>
+                                    <li>
+                                        <router-link to="/users">Users</router-link>
+                                    </li>
+                                    <li><a @click="logout()">Logout</a></li>
+                                </ul>
                             </li>
                         </ul>
                     </div>
@@ -22,14 +39,36 @@
 
 
 <script>
+ import Vue from 'vue'
+ import 'foundation-sites'
+ import $ from 'jquery';
+
  export default {
      name: 'app',
+     directives: {
+         'dropdown-menu': {
+             bind(el) {
+                 new Foundation.DropdownMenu($(el))
+             },
+             unbind(el) {
+                 $(el).foundation('_destroy')
+             }
+         }
+     },
+     computed: {
+         currentUserId() {
+             return this.$store.state.currentUser.id
+         },
+         currentUserName() {
+             return this.$store.state.currentUser.username
+         }
+     },
      methods: {
          hasToken() {
-             return !!localStorage.getItem('token')
+             return !!this.$store.state.token
          },
          logout() {
-             localStorage.removeItem('token')
+             this.$store.commit('logout')
              this.$router.replace('/login')
          }
      }
@@ -37,15 +76,22 @@
 </script>
 
 <style lang="scss" scoped>
+
+ $top-bar-bg: #f9f9f9;
+
  .app-grid-cell {
      border: solid 1px #ccc
  }
 
  .top-bar {
-     background: #f9f9f9;
+     background: $top-bar-bg;
 
+     .menu-text {
+         font-weight: normal;
+         background: $top-bar-bg;
+     }
      .menu {
-         background: transparent;
+         background: white;
      }
  }
 </style>

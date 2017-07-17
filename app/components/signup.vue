@@ -59,22 +59,22 @@
              if (!this.$data.username || !this.$data.password1 || !this.$data.password2) return;
 
              var form = new FormData(document.getElementById('signup-form'));
-             fetch('/api/auth/register', {
-                 method: 'POST',
-                 body: form
-             }).then((response) => {
-                 return response.json().then((data) => [response, data])
-             }).then((response_data) => {
-                 const [response, data] = response_data
-                 if (response.status === 201) {
-                     localStorage.setItem('token', data['key'])
+             this.$http.post('/api/auth/register', form)
+                 .then((response) => {
+                     return response.json().then((data) => [response, data])
+                 })
+                 .then((response_data) => {
+                     const [response, data] = response_data
+                     this.$store.commit('setCurrentUser', data.user)
+                     this.$store.commit('setToken', data.token)
                      this.$router.replace('/')
-                 } else {
-                     this.$data.errors = data;
-                 }
-             }).catch((err) => {
-                 this.$data.errors['non_field_errors'] = 'Unknown error'
-             })
+                 }).catch((err) => {
+                     if (err.json) {
+                         err.json().then((data) => this.$data.errors = data)
+                     } else {
+                         this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                     }
+                 })
          }
      }
  }
