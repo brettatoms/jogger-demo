@@ -6,14 +6,17 @@ import secrets
 from .fixtures import *  # noqa
 from ..models import Jog
 
-# TODO: make sure we only return jogs lists of the current user
 # TODO: make sure we can't delete a jog that belongs to someone else
+# TODO: test routes don't work if not logged in
 
 
-def test_get_jog_list(jog, api_client):
+def test_get_jog_list(jog, user2, api_client):
+    Jog(date=date.today(), distance_in_feet=1, time_in_seconds=1,
+        user=user2).save()
     response = api_client.get('/api/jogs/')
     assert response.status_code == 200
     data = json.loads(response.content)
+    # should only get the jobs for the current user
     assert len(data) == 1
     assert data[0]['id'] == jog.id
     assert data[0]['distance_in_feet'] == jog.distance_in_feet
@@ -26,11 +29,39 @@ def test_get_empty_jog_list(api_client):
     assert response.content == b'[]'
 
 
+def test_get_jog_list_of_other_user_fail(api_client, jog, user2):
+    response = api_client.get('/api/users/{}/jogs/'.format(user2.id))
+    assert response.status_code == 403
+
+
+def test_get_jog_list_of_other_user_as_admin(api_client, jog, admin_user,
+                                             user2):
+    response = api_client.get('/api/users/{}/jogs/'.format(user2.id))
+    assert response.status_code == 200
+    data = json.loads(response.content)
+    assert len(data) == 1
+    assert data[0]['id'] == jog.id
+    assert data[0]['distance_in_feet'] == jog.distance_in_feet
+    assert data[0]['time_in_seconds'] == jog.time_in_seconds
+    assert data[0]['time_in_seconds'] == jog.time_in_seconds
+
+
 def test_get_jog_detail(api_client, jog):
     response = api_client.get('/api/jogs/{}/'.format(jog.id))
     data = json.loads(response.content)
     assert response.status_code == 200, data
     assert data['id'] == jog.id
+
+
+def test_get_jog_detail_of_other_user_as_admin(api_client, jog, admin_user,
+                                               user2):
+    jog_user2 = Jog(
+        date=date.today(), distance_in_feet=1, time_in_seconds=1, user=user2)
+    jog_user2.save()
+    response = api_client.get('/api/jogs/{}/'.format(jog_user2.id))
+    data = json.loads(response.content)
+    assert response.status_code == 200, data
+    assert data['id'] == jog_user2.id
 
 
 def test_get_jog_detail_permissions_fail(django_user_model, api_client):
@@ -47,7 +78,7 @@ def test_get_jog_detail_permissions_fail(django_user_model, api_client):
 
     response = api_client.get('/api/jogs/{}/'.format(jog2.id))
     data = json.loads(response.content)
-    assert response.status_code == 404, data
+    assert response.status_code == 403, data
 
 
 def test_post_jog(api_client):

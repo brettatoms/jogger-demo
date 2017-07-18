@@ -1,13 +1,14 @@
 from datetime import date
+from random import randint
 import secrets
 
 # from django.utils import timezone
 import pytest
-from random import randint
+from django.contrib.auth.models import Group, Permission
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from ..models import Jog
+from ..models import Jog, USER_ADMIN_GROUP_NAME, USER_MANAGER_GROUP_NAME
 
 
 @pytest.fixture()
@@ -20,6 +21,46 @@ def user(django_user_model, password):
     user = django_user_model.objects.create_user(
         username='testy', password=password)
     Token.objects.create(user=user)
+    return user
+
+
+@pytest.fixture()
+def user2(django_user_model, password):
+    user = django_user_model.objects.create_user(
+        username='testy2', password=password)
+    Token.objects.create(user=user)
+    return user
+
+
+@pytest.fixture()
+def user_manager_permissions():
+    return [
+        'list_users', 'view_user', 'add_user', 'change_user', 'delete_user'
+    ]
+
+
+@pytest.fixture()
+def user_admin_permissions(user_manager_permissions):
+    return user_manager_permissions + [
+        'list_jogs', 'view_jog', 'add_jog', 'change_jog', 'delete_jog'
+    ]
+
+
+@pytest.fixture()
+def admin_user(user, user_admin_permissions):
+    group = Group.objects.get(name=USER_ADMIN_GROUP_NAME)
+    user.groups.add(group)
+    perms = Permission.objects.filter(codename__in=user_admin_permissions)
+    group.permissions.add(*perms)
+    return user
+
+
+@pytest.fixture()
+def manager_user(user, user_manager_permissions):
+    group = Group.objects.get(name=USER_MANAGER_GROUP_NAME)
+    user.groups.add(group)
+    perms = Permission.objects.filter(codename__in=user_manager_permissions)
+    group.permissions.add(*perms)
     return user
 
 
