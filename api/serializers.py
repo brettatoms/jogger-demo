@@ -1,9 +1,7 @@
-from rest_framework.serializers import CharField, ChoiceField, ModelSerializer, \
-    SerializerMethodField, ValidationError
+from rest_framework.serializers import CharField, ChoiceField, ModelSerializer
 import rest_auth
-from django.contrib.auth.models import Group
 
-from .models import Jog, User, USER_ADMIN_GROUP_NAME, USER_MANAGER_GROUP_NAME, USER_ROLES
+from .models import Jog, User, USER_ROLES
 
 
 class JogSerializer(ModelSerializer):
@@ -15,6 +13,11 @@ class JogSerializer(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
     role = ChoiceField(USER_ROLES)
+
+    def to_representation(self, user):
+        # set class to our proxied user class
+        user.__class__ = User
+        super().to_representation(user)
 
     def create(self, validated_data):
         role = validated_data.pop('role', None)

@@ -65,16 +65,14 @@ def manager_user(user, user_manager_permissions):
 
 
 @pytest.fixture()
-def user_password(django_user_model, password):
-    user = django_user_model.objects.create_user(
-        username='testy', email='testy@test.com', password=password)
+def user_password(user, password):
+    user.set_password(password)
     return user, password
 
 
 @pytest.fixture()
 def client_user(client, user, password):
     assert client.login(username=user.username, password=password)
-    print(client)
     return client
 
 
