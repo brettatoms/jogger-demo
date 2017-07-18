@@ -52,6 +52,7 @@
     "vuex-persistedstate": "^2.0.0",
     "webpack": "^2.6.1",
     "webpack-bundle-tracker": "^0.2.0",
+    "webpack-merge": "^4.1.0",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
@@ -93,8 +94,7 @@
     "sinon-chai": "^2.8.0",
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0",
-    "webpack-hot-middleware": "^2.18.0",
-    "webpack-merge": "^4.1.0"
+    "webpack-hot-middleware": "^2.18.0"
   },
   "engines": {
     "node": ">= 8.1.3",
