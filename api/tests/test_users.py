@@ -55,8 +55,12 @@ def test_get_other_user_as_admin(api_client, admin_user, user2):
     assert data['id'] == user2.id
 
 
-def test_post_user_as_admin(api_client, admin_user):
-    request_data = {'username': 'test@toptal-jogger.com', 'role': 'manager'}
+def test_post_user_as_admin(api_client, admin_user, password):
+    request_data = {
+        'username': 'test@toptal-jogger.com',
+        'role': 'manager',
+        'password': password
+    }
     response = api_client.post('/api/users/', data=request_data, format='json')
     data = json.loads(response.content)
     assert response.status_code == 201, data
@@ -65,8 +69,12 @@ def test_post_user_as_admin(api_client, admin_user):
     assert data['role'] == request_data['role']
 
 
-def test_post_user_as_manager(api_client, manager_user):
-    request_data = {'username': 'test@toptal-jogger.com', 'role': 'manager'}
+def test_post_user_as_manager(api_client, manager_user, password):
+    request_data = {
+        'username': 'test@toptal-jogger.com',
+        'role': 'manager',
+        'password': password
+    }
     response = api_client.post('/api/users/', data=request_data, format='json')
     data = json.loads(response.content)
     assert response.status_code == 201, data
