@@ -51,7 +51,7 @@
                  .map((jog) => {
                      return {
                          id: jog.id,
-                         date: moment(jog.date).format('MMM, M, YYYY'),
+                         date: moment(jog.date, 'YYYY-MM-DD').format('MMM D, YYYY'),
                          distance_in_feet: jog.distance_in_feet,
                          time_in_seconds: jog.time_in_seconds
                      }
