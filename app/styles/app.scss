@@ -2,9 +2,8 @@
 
 @import '~foundation-sites/scss/foundation';
 @import '~pikaday/scss/pikaday';
+@import '~toastr/toastr';
 
-// @import 'settings';
-// @import 'foundation';
 // @import 'motion-ui';
 
 @include foundation-global-styles;
@@ -59,4 +58,9 @@
 select {
     -moz-appearance: none;
     -webkit-appearance: none;
+}
+
+
+.toast-container {
+    text-align: center;
 }

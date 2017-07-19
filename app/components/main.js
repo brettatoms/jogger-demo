@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 import createPersistedState from 'vuex-persistedstate'
 import 'whatwg-fetch'
+import toastr from 'toastr'
 
 import App from './app.vue'
 import Login from './login.vue'
@@ -20,6 +21,9 @@ Vue.use(VueResource)
 
 // register global components
 Vue.component('inline-errors', InlineErrors)
+
+toastr.options.closeButton = true
+toastr.options.positionClass = 'toast-top-center'
 
 const routes = [
     { path: '/login', component: Login },
@@ -90,6 +94,17 @@ const store = new Vuex.Store({
         },
         setUsers(state, users) {
             state.users = users
+        },
+        deleteUser(state, userId) {
+            if (userId == state.currentUser.id) {
+                state.commit('logout')
+                return
+            }
+
+            const index = state.users.findIndex((u) => u.user_id == userId)
+            if (index !== -1) {
+                state.users.splice(index, 1)
+            }
         }
     }
 })

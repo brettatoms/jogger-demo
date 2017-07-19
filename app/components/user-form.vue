@@ -6,10 +6,7 @@
                 <form id="user-form">
                     <label>Username
                         <input type="text" v-model="user.username"/>
-                        <p
-                            v-for="msg in errors['date']"
-                            class="alert help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['username']"></inline-errors>
                     </label>
                     <label>Role
                         <select v-model="user.role">
@@ -17,31 +14,19 @@
                             <option value="manager">manager</option>
                             <option value="admin">admin</option>
                         </select>
-                        <p
-                            v-for="msg in errors['date']"
-                            class="alert help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['role']"></inline-errors>
                     </label>
 
                     <div v-if="!user.id">
                         <label>Password
                             <input type="password" v-model="password1"/>
-                            <p
-                                v-for="msg in errors['password1']"
-                                class="alert help-text"
-                            >{{ msg }}</p>
+                            <inline-errors :errors="errors['password']"></inline-errors>
                         </label>
-
 
                         <label>Confirm Password
                             <input type="password" v-model="password2"/>
-                            <p
-                                v-for="msg in errors['password2']"
-                                class="alert help-text"
-                            >{{ msg }}</p>
                         </label>
                     </div>
-
 
                     <div class="actions grid-x align-justify" v-if="!confirmDelete">
                         <div class="cell small-4">
@@ -80,10 +65,7 @@
                         </div>
                     </div>
                 </form>
-                <p
-                    v-for="msg in errors['non_field_errors']"
-                    class="alert"
-                >{{ msg }}</p>
+                <inline-errors :errors="errors['non_field_errors']"></inline-errors>
             </div>
         </div>
     </div>
@@ -91,6 +73,7 @@
 
 <script>
  import VueRouter from 'vue-router'
+ import toastr from 'toastr'
 
  export default {
      data: function() {
@@ -133,11 +116,12 @@
          },
 
          changePassword() {
+             this.$data.errors = { }
              this.$http.post('/api/auth/password/change/', {
                  new_password1: this.$data.password1,
                  new_password2: this.$data.password2
              }).then((response) => {
-                 /* TODO  */
+                 toastr.success('Password changed')
              }).catch((err) => {
                  console.log(err)
                  const contentType = err.headers ? err.headers.map['Content-Type'] : []
@@ -164,16 +148,18 @@
 
              // set the password if the user entered one
              if (this.$data.password1 && (this.$data.password1 == this.$data.password2)) {
-                 data.password1 = this.$data.password1
-                 data.password2 = this.$data.password2
+                 data.password = this.$data.password1
              }
 
+             this.$data.errors = { }
              this.$http[method](url, data)
                  .then((response) => {
-                     if (response.status !== 200) {
+                     if (!response.ok) {
                          this.$data.errors = response.body
                          return;
                      }
+
+                     toastr.success('User saved')
 
                      return response
                          .json()
@@ -188,26 +174,34 @@
                          })
                  })
                  .catch((err) => {
-                     console.error(err)
-                     this.$data.errors = { 'non_field_errors': ['Unknown error'] }
+                     console.log(err)
+                     const contentType = err.headers ? err.headers.map['Content-Type'] : []
+                     if (contentType.includes('application/json')) {
+                         err.json().then((data) => { this.$data.errors = data; console.log(this.$data.errors) })
+                     } else {
+                         this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                     }
                  })
          },
 
          remove() {
-             this.$http.delete(`/api/users/${this.$data.userId}/`)
+             const userId = this.$data.user.id;
+             this.$http.delete(`/api/users/${userId}/`)
                  .then((response) => {
-                     if (response.status !== 200) {
+                     if (!response.ok) {
                          /* this.$data.errors = response.body*/
                          console.error(response.body)
                          return;
                      }
 
-                     this.$store.commit('deleteUser', this.$data.userId)
+                     toastr.success('User deleted')
+                     this.$store.commit('deleteUser', userId)
                      this.$router.back(); // pop router history
                  }).catch((err) => {
                      console.error(err)
                      this.$data.errors = { 'non_field_errors': ['Unknown error'] }
                  })
+                 .then(() => this.confirmDelete = false)
          }
      }
  }
