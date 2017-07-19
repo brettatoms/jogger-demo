@@ -5,10 +5,7 @@
                 <form id="jog-form">
                     <label>Date
                         <input type="text" name="date" ref="jogDateInput"/>
-                        <p
-                            v-for="msg in errors['date']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['date']"></inline-errors>
                     </label>
                     <label>Distance
                         <div class="input-group">
@@ -16,10 +13,7 @@
                                    name="distance_in_feet" v-model="distanceInFeet"/>
                             <span class="input-group-label">ft.</span>
                         </div>
-                        <p
-                            v-for="msg in errors['distance_in_feet']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['distance_in_feet']"></inline-errors>
                     </label>
 
                     <label>Duration
@@ -28,19 +22,14 @@
                                    v-model="timeInSeconds"/>
                             <span class="input-group-label">minutes</span>
                         </div>
-                        <p
-                            v-for="msg in errors['time_in_seconds']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['time_in_seconds']"></inline-errors>
                     </label>
 
                     <a class="cancel-button clear button" @click="cancel()">Cancel</a>
                     <a class="login-button button" @click="save()">Save</a>
                 </form>
-                <p
-                    v-for="msg in errors['non_field_errors']"
-                    class="error-message"
-                >{{ msg }}</p>
+
+                <inline-errors :errors="errors['non_field_errors']"></inline-errors>
             </div>
         </div>
     </div>

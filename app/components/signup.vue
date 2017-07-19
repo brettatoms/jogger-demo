@@ -5,25 +5,17 @@
                 <form id="signup-form" @keyup.13="signup()">
                     <label>Username
                         <input type="text" name="username" v-model="username"/>
-                        <p
-                            v-for="msg in errors['username']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['username']"></inline-errors>
                     </label>
                     <label>Password
                         <input type="password" name="password1" v-model="password1"/>
-                        <p
-                            v-for="msg in errors['password1']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+
+                        <inline-errors :errors="errors['password1']"></inline-errors>
                     </label>
 
                     <label>Confirm Password
                         <input type="password" name="password2" v-model="password2"/>
-                        <p
-                            v-for="msg in errors['password2']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+                        <inline-errors :errors="errors['password2']"></inline-errors>
                     </label>
 
                     <button
@@ -34,10 +26,8 @@
                     >Signup</button>
                     <router-link to="/login" class="login-button clear button">Login</router-link>
                 </form>
-                <p
-                    v-for="msg in errors['non_field_errors']"
-                    class="error-message"
-                >{{ msg }}</p>
+
+                <inline-errors :errors="errors['non_field_errors']"></inline-errors>
                 <p class="error-message">{{ errors.detail }}</p>
             </div>
         </div>

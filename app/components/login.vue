@@ -5,18 +5,14 @@
                 <form id="login-form" @keyup.13="login()">
                     <label>Username
                         <input type="text" name="username" v-model="username"/>
-                        <p
-                            v-for="msg in errors['username']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+
+                        <inline-errors :errors="errors['username']"></inline-errors>
                     </label>
 
                     <label>Password
                         <input type="password" name="password" v-model="password"/>
-                        <p
-                            v-for="msg in errors['password']"
-                            class="error-message help-text"
-                        >{{ msg }}</p>
+
+                        <inline-errors :errors="errors['password']"></inline-errors>
                     </label>
                     <!-- <a class="forgot-password-link">Forgot your password?</a> -->
                     <button
@@ -27,10 +23,7 @@
                     >Login</button>
                     <router-link to="/signup" class="signup-button clear button">Sign up</router-link>
                 </form>
-                <p
-                    v-for="msg in errors['non_field_errors']"
-                    class="error-message"
-                >{{ msg }}</p>
+                <inline-errors :errors="errors['non_field_errors']"></inline-errors>
             </div>
         </div>
     </div>
@@ -99,9 +92,5 @@
 
  .button {
      width: 100%;
- }
-
- .error-message {
-     color: red;
  }
 </style>
