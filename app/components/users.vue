@@ -12,7 +12,7 @@
                 <tr class="jog-row" v-for="user in users" @click="editUser(user)">
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
-                    <td v-if="isAdmin"><a @click="viewJogs(user) ">view jogs</a></td>
+                    <td v-if="isAdmin"><a @click.prevent.stop="viewJogs(user) ">view jogs</a></td>
                 </tr>
             </tbody>
         </table>
@@ -80,6 +80,13 @@
              this.$router.push({
                  path: '/users/edit',
                  query: { id: user.id }
+             })
+         },
+
+         viewJogs(user) {
+             this.$router.push({
+                 path: '/',
+                 query: { user_id: user.id }
              })
          }
      }

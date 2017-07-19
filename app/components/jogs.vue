@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div v-if="isOtherUser" class="callout small text-center warning">
+            You are currently viewing the jogs for <b>{{ otherUser.username }}</b>
+        </div>
+
         <div v-if="formattedJogs.length || fromDate || toDate">
                 <div class="grid-x grid-padding-x">
                     <div class="auto cell">
@@ -19,6 +23,8 @@
                     </div>
                 </div>
         </div>
+
+        <inline-errors :errors="[errors.detail]"></inline-errors>
 
         <table class="jog-table" v-if="formattedJogs.length">
             <thead>
@@ -49,6 +55,7 @@
  import VueRouter from 'vue-router'
  import orderBy from 'lodash.orderby'
  import Pikaday from 'pikaday'
+ import { handleErrorResponse } from './utils'
 
  export default {
      data: function() {
@@ -56,13 +63,25 @@
              sortKey:  'date',
              sortAsc: true,
              fromDate: null,
-             toDate: null
+             toDate: null,
+             jogs: [],
+             errors: { }
          }
      },
 
      beforeMount() {
-         this.loadJogs();
+         const userId = this.$route.query.user_id
+         this.loadJogs(userId)
+             .then((jogs) => {
+                 if (!userId) {
+                     this.$store.commit('setJogs', jogs)
+                     this.$data.jogs = this.$store.state.jogs
+                 } else {
+                     this.$data.jogs = jogs
+                 }
+             })
      },
+
      mounted() {
          this._fromDatePicker = new Pikaday({
              field: this.$refs.fromDateInput,
@@ -82,8 +101,23 @@
      },
 
      computed: {
+         isOtherUser() {
+             return this.$route.query.user_id && this.$route.query.user_id !== this.$store.state.currentUser.id
+         },
+
+         otherUser() {
+             if (!this.$route.query.user_id) {
+                 return
+             }
+
+             return this.$store.state.users.find((u) => u.id == this.$route.query.user_id)
+
+         },
+
          formattedJogs() {
-             const filteredData = this.$store.state.jogs
+             if (!this.$data.jogs) return []
+
+             const filteredData = this.$data.jogs
                  .filter((jog) => {
                      // filter out days before fromDate
                      const { fromDate, toDate } = this.$data;
@@ -145,21 +179,11 @@
              }
          },
 
-         loadJogs() {
-             this.$http.get('/api/jogs/')
-                 .then((response) => {
-                     return response
-                         .json()
-                         .then((data) => {
-                             this.$store.commit('setJogs', response.body)
-                     })
-                 }).catch((err) => {
-                     if (err.json) {
-                         err.json().then((data) => this.$data.errors = data)
-                     } else {
-                         this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
-                     }
-                 })
+         loadJogs(userId) {
+             const url = userId ? `/api/users/${userId}/jogs/` : '/api/jogs/'
+             return this.$http.get(url)
+                 .then((response) => response.json())
+                 .catch((err) => handleErrorResponse(this, err))
          },
 
          editJog(jog) {
@@ -203,5 +227,9 @@
      input {
          margin-bottom: 4px;
      }
+ }
+
+ .warning {
+     background:  #fff3d9;
  }
 </style>
