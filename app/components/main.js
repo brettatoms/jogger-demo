@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 import createPersistedState from 'vuex-persistedstate'
-import 'whatwg-fetch'
 import toastr from 'toastr'
 
 import App from './app.vue'
