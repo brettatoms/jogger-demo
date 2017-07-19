@@ -18,7 +18,7 @@
                             class="error-message help-text"
                         >{{ msg }}</p>
                     </label>
-                    <a class="forgot-password-link">Forgot your password?</a>
+                    <!-- <a class="forgot-password-link">Forgot your password?</a> -->
                     <button
                         class="login-button button"
                         type="button"
@@ -64,7 +64,9 @@
                      this.$router.replace('/')
                  })
                  .catch((err) => {
-                     if (err.json) {
+                     console.log(err)
+                     const contentType = err.headers ? err.headers.map['Content-Type'] : []
+                     if (contentType.includes('application/json')) {
                          err.json().then((data) => this.$data.errors = data)
                      } else {
                          this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])

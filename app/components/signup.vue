@@ -69,7 +69,9 @@
                      this.$store.commit('setToken', data.token)
                      this.$router.replace('/')
                  }).catch((err) => {
-                     if (err.json) {
+                     console.error(err)
+                     const contentType = err.headers ? err.headers.map['Content-Type'] : []
+                     if (contentType.includes('application/json')) {
                          err.json().then((data) => this.$data.errors = data)
                      } else {
                          this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
