@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group, Permission
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from ..models import Jog, USER_ADMIN_GROUP_NAME, USER_MANAGER_GROUP_NAME
+from ..models import Jog, User, USER_ADMIN_GROUP_NAME, USER_MANAGER_GROUP_NAME
 
 
 @pytest.fixture()
@@ -18,16 +18,16 @@ def password():
 
 @pytest.fixture()
 def user(django_user_model, password):
-    user = django_user_model.objects.create_user(
-        username='testy', password=password)
+    # user = django_user_model.objects.create_user(
+    user = User.objects.create_user(username='testy', password=password)
     Token.objects.create(user=user)
     return user
 
 
 @pytest.fixture()
 def user2(django_user_model, password):
-    user = django_user_model.objects.create_user(
-        username='testy2', password=password)
+    # user = django_user_model.objects.create_user(
+    user = User.objects.create_user(username='testy2', password=password)
     Token.objects.create(user=user)
     return user
 
