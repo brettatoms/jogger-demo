@@ -1,4 +1,6 @@
-import * from base
+import os
+
+from .base import *  # noqa
 
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
