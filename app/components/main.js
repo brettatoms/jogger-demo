@@ -12,10 +12,14 @@ import Jogs from './jogs.vue'
 import JogForm from './jog-form.vue'
 import Users from './users.vue'
 import UserForm from './user-form.vue'
+import InlineErrors from './inline-errors.vue'
 
 Vue.use(VueRouter)
 Vue.use(Vuex)
 Vue.use(VueResource)
+
+// register global components
+Vue.component('inline-errors', InlineErrors)
 
 const routes = [
     { path: '/login', component: Login },
