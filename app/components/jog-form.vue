@@ -25,8 +25,23 @@
                         <inline-errors :errors="errors['time_in_seconds']"></inline-errors>
                     </label>
 
-                    <a class="cancel-button clear button" @click="cancel()">Cancel</a>
-                    <a class="login-button button" @click="save()">Save</a>
+                    <div class="actions grid-x align-justify" v-if="!confirmDelete">
+                        <div class="cell small-4">
+                            <a v-if="jogId" class="alert clear button" @click="confirmDelete=true">Delete</a>
+                        </div>
+                        <div class="text-right cell small-6">
+                            <a class="clear button" @click="cancel()">Cancel</a>
+                            <a class="button" @click="save()">Save</a>
+                        </div>
+                    </div>
+
+                    <div class="confirm-delete-container grid-x align-justify" v-if="confirmDelete">
+                        <p class="cell small-6">Are you sure you want to delete this jog?</p>
+                        <div class="text-right cell small-6">
+                            <a class="clear button" @click="confirmDelete=false">No</a>
+                            <a class="delete-yes-button alert button" @click="remove()">Yes</a>
+                        </div>
+                    </div>
                 </form>
 
                 <inline-errors :errors="errors['non_field_errors']"></inline-errors>
@@ -48,7 +63,8 @@
              date: null,
              timeInSeconds: null,
              distanceInFeet: null,
-             errors: { }
+             errors: { },
+             confirmDelete: false
          }
      },
 
@@ -71,7 +87,6 @@
                          this.$data.errors = { 'non_field_errors': ['Unknown error'] }
                          return;
                      }
-
 
                      return response.json().then((data) => {
                          this.$data.jogId = data.id
@@ -126,10 +141,44 @@
                      this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
                  }
              })
+         },
+
+         remove() {
+             const jogId = this.$data.jogId
+             this.$http.delete(`/api/jogs/${jogId}/`)
+                 .then((response) => {
+                     if (!response.ok) {
+                         /* this.$data.errors = response.body*/
+                         console.error(response.body)
+                         return;
+                     }
+
+                     toastr.success('Jog deleted')
+                     this.$store.commit('deleteJog', jogId)
+                     this.$router.back(); // pop router history
+                 }).catch((err) => {
+                     console.error(err)
+                     this.$data.errors = { 'non_field_errors': ['Unknown error'] }
+                 })
+                 .then(() => this.confirmDelete = false)
          }
      }
  }
 </script>
 
 <style lang="scss" scoped>
+ .confirm-delete-container {
+     padding: 10px;
+     margin: 10px 0;
+     background: #cc4b37;
+     color: white;
+
+     .button {
+         color: white;
+     }
+ }
+
+ .delete-yes-button {
+     border: solid 1px white;
+ }
 </style>

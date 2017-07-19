@@ -75,11 +75,17 @@ const store = new Vuex.Store({
         addJog(state, jog) {
             state.jogs.unshift(jog)
         },
+        deleteJog(state, jog) {
+            const index = state.jogs.findIndex((j) => j.id == jog.id)
+            if (index !== -1) {
+                state.jogs.splice(index, 1)
+            }
+        },
         addUser(state, user) {
             state.users.unshift(user)
         },
         updateUser(state, user) {
-            const existingUser = state.users.find((u) => u.user_id == user.user_id)
+            const existingUser = state.users.find((u) => u.id == user.id)
             if (existingUser) {
                 Object.assign(existingUser, user)
             } else {
@@ -100,7 +106,7 @@ const store = new Vuex.Store({
                 return
             }
 
-            const index = state.users.findIndex((u) => u.user_id == userId)
+            const index = state.users.findIndex((u) => u.id == userId)
             if (index !== -1) {
                 state.users.splice(index, 1)
             }
