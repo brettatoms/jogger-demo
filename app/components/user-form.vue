@@ -2,6 +2,7 @@
     <div class="job-form-container grid-container">
         <div class="grid-x">
             <div class="medium-8 medium-offset-2 cell">
+                <h5 v-if="!user.id">Create new user</h5>
                 <form id="user-form">
                     <label>Username
                         <input type="text" v-model="user.username"/>
@@ -22,10 +23,29 @@
                         >{{ msg }}</p>
                     </label>
 
+                    <div v-if="!user.id">
+                        <label>Password
+                            <input type="password" v-model="password1"/>
+                            <p
+                                v-for="msg in errors['password1']"
+                                class="alert help-text"
+                            >{{ msg }}</p>
+                        </label>
+
+
+                        <label>Confirm Password
+                            <input type="password" v-model="password2"/>
+                            <p
+                                v-for="msg in errors['password2']"
+                                class="alert help-text"
+                            >{{ msg }}</p>
+                        </label>
+                    </div>
+
 
                     <div class="actions grid-x align-justify" v-if="!confirmDelete">
                         <div class="cell small-4">
-                            <a class="alert clear button" @click="confirmDelete=true">Delete</a>
+                            <a v-if="user.id" class="alert clear button" @click="confirmDelete=true">Delete</a>
                         </div>
                         <div class="text-right cell small-6">
                             <a class="clear button" @click="cancel()">Cancel</a>
@@ -42,32 +62,23 @@
                     </div>
                 </form>
 
-                <form>
-                    <label>Confirm Password
-                        <input type="password" name="confirm_password" v-model="confirmPassword"/>
-                        <p
-                            v-for="msg in errors['confirm_password']"
-                            class="alert help-text"
-                        >{{ msg }}</p>
-                    </label>
-
+                <form class="change-password-form" v-if="user.id">
                     <label>Password
-                        <input type="password" name="password1" v-model="password1"/>
-                        <p
-                            v-for="msg in errors['password1']"
-                            class="alert help-text"
-                        >{{ msg }}</p>
+                        <input type="password" v-model="password1"/>
+                        <inline-errors :errors="errors['new_password1']"></inline-errors>
                     </label>
 
 
                     <label>Confirm Password
-                        <input type="password" name="password2" v-model="password2"/>
-                        <p
-                            v-for="msg in errors['password2']"
-                            class="alert help-text"
-                        >{{ msg }}</p>
+                        <input type="password" v-model="password2"/>
+                        <inline-errors :errors="errors['new_password2']"></inline-errors>
                     </label>
 
+                    <div class="actions grid-x align-right" v-if="!confirmDelete">
+                        <div class="text-right cell small-6">
+                            <a class="button" @click="changePassword()">Change password</a>
+                        </div>
+                    </div>
                 </form>
                 <p
                     v-for="msg in errors['non_field_errors']"
@@ -84,7 +95,7 @@
  export default {
      data: function() {
          return {
-             user: { },
+             user: { role: 'user' },
              password1: null,
              password2: null,
              errors: { },
@@ -93,12 +104,13 @@
      },
 
      created() {
-         this.$data.userId = this.$route.query.id
          if (!this.$route.query.id) {
              return
          }
+
          // get jog details
-         this.$http.get(`/api/users/${this.$route.query.id}/`)
+         const userId = this.$route.query.id
+         this.$http.get(`/api/users/${userId}/`)
              .then((response) => {
                  if (response.status !== 200) {
                      console.log(response.data)
@@ -121,21 +133,28 @@
          },
 
          changePassword() {
-             this.$http('/api/auth/password/change', {
+             this.$http.post('/api/auth/password/change/', {
                  new_password1: this.$data.password1,
-                 new_password2: this.$data.password2,
-                 old_password: this.$data.confirmPassword
+                 new_password2: this.$data.password2
              }).then((response) => {
                  /* TODO  */
+             }).catch((err) => {
+                 console.log(err)
+                 const contentType = err.headers ? err.headers.map['Content-Type'] : []
+                 if (contentType.includes('application/json')) {
+                     err.json().then((data) => { this.$data.errors = data; console.log(this.$data.errors) })
+                 } else {
+                     this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                 }
              })
          },
 
          save() {
              let method = 'post'
              let url = '/api/users/'
-             if (this.$data.userId) {
+             if (this.$data.user.id) {
                  method = 'put'
-                 url = `${url}${this.$data.userId}/`
+                 url = `${url}${this.$data.user.id}/`
              }
 
              const data = {
@@ -195,6 +214,10 @@
 </script>
 
 <style lang="scss" scoped>
+ h5 {
+     margin-top: 12px;
+ }
+
  .confirm-delete-container {
      padding: 10px;
      margin: 10px 0;
@@ -208,6 +231,10 @@
 
  .delete-yes-button {
      border: solid 1px white;
+ }
+
+ .change-password-form {
+     margin-top: 20px;
  }
 
 </style>
