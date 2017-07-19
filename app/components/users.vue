@@ -12,6 +12,7 @@
                 <tr class="jog-row" v-for="user in users" @click="editUser(user)">
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
+                    <td v-if="isAdmin"><a @click="viewJogs(user) ">view jogs</a></td>
                 </tr>
             </tbody>
         </table>
@@ -40,6 +41,9 @@
      computed: {
          users() {
              return this.$store.state.users
+         },
+         isAdmin() {
+             return this.$store.state.currentUser.role == 'admin'
          }
      },
 
