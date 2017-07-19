@@ -14,11 +14,6 @@ class JogSerializer(ModelSerializer):
 class UserSerializer(ModelSerializer):
     role = ChoiceField(USER_ROLES)
 
-    def to_representation(self, user):
-        # set class to our proxied user class
-        user.__class__ = User
-        super().to_representation(user)
-
     def create(self, validated_data):
         role = validated_data.pop('role', None)
         user = User.objects.create_user(**validated_data)
@@ -43,13 +38,19 @@ class LoginSerializer(rest_auth.serializers.LoginSerializer):
                 }
             }
         }
-        # read_only_fields = ('user', )
+        read_only_fields = ('user', )
 
 
 class TokenSerializer(ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializer()
     token = CharField(source='key')
 
-    class Meta:
+    def to_representation(self, obj):
+        # big ugly hack to make the token model use our User proxy model when
+        # serializing
+        obj.user.__class__ = User
+        return super().to_representation(obj)
+
+    class Meta(rest_auth.serializers.TokenSerializer.Meta):
         model = rest_auth.models.TokenModel
         fields = ('token', 'user')
