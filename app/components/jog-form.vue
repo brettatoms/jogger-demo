@@ -39,6 +39,7 @@
  import VueRouter from 'vue-router'
  import Pikaday from 'pikaday'
  import moment from 'moment'
+ import toastr from 'toastr'
 
  export default {
      data: function() {
@@ -64,27 +65,25 @@
          this.$data.jogId = this.$route.query.id
          if (this.$data.jogId) {
              // get jog details
-             fetch(`/api/jogs/${this.$data.jogId}/`, {
-                 headers: {
-                     'Authorization': `Token ${this.$store.state.token}`,
-                 }
-             }).then((response) => {
-                 if (response.status !== 200) {
-                     this.$data.errors = { 'non_field_errors': ['Unknown error'] }
-                     return;
-                 }
+             this.$http.get(`/api/jogs/${this.$data.jogId}/`)
+                 .then((response) => {
+                     if (!response.ok) {
+                         this.$data.errors = { 'non_field_errors': ['Unknown error'] }
+                         return;
+                     }
 
-                 return response.json().then((data) => {
-                     this.$data.jogId = data.id
-                     this.$data.timeInSeconds = data.time_in_seconds
-                     this.$data.distanceInFeet = data.distance_in_feet
-                     this.$data.date = data.date
-                     this._jogDatePicker.setDate(data.date)
+
+                     return response.json().then((data) => {
+                         this.$data.jogId = data.id
+                         this.$data.timeInSeconds = data.time_in_seconds
+                         this.$data.distanceInFeet = data.distance_in_feet
+                         this.$data.date = data.date
+                         this._jogDatePicker.setDate(data.date)
+                     })
+                 }).catch((err) => {
+                     console.log(err)
+                     this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
                  })
-             }).catch((err) => {
-                 console.log(err)
-                 this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
-             })
          }
      },
 
@@ -95,35 +94,37 @@
          save() {
              const date = this.$data.date;
              const formattedDate  = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-             let method = 'POST'
+             let method = 'post'
              let url = '/api/jogs/'
              if (this.$data.jogId) {
-                 method = 'PUT'
+                 method = 'put'
                  url = `${url}${this.$data.jogId}/`
              }
-             fetch(url, {
-                 method,
-                 body: JSON.stringify({
-                     date: formattedDate,
-                     distance_in_feet: this.$data.distanceInFeet,
-                     time_in_seconds: this.$data.timeInSeconds
-                 }),
-                 headers: {
-                     'Authorization': `Token ${this.$store.state.token}`,
-                     'Content-Type': 'application/json'
-                 }
+             this.$http[method](url, {
+                 date: formattedDate,
+                 distance_in_feet: this.$data.distanceInFeet,
+                 time_in_seconds: this.$data.timeInSeconds
              }).then((response) => {
                  return response.json().then(data => [response, data])
              }).then((response_data) => {
                  const [response, data] = response_data
-                 if (response.status !== 200) {
+                 if (!response.ok) {
                      this.$data.errors = data
-                 } else {
-                     this.$store.commit('addJog', data)
-                     this.$router.back(); // pop router history
+                     return
                  }
+
+                 toastr.success('Jog saved')
+
+                 this.$store.commit('addJog', data)
+                 this.$router.back(); // pop router history
              }).catch((err) => {
-                 this.$data.errors = { 'non_field_errors': ['Unknown error'] }
+                 console.log(err)
+                 const contentType = err.headers ? err.headers.map['Content-Type'] : []
+                 if (contentType.includes('application/json')) {
+                     err.json().then((data) => this.$data.errors = data)
+                 } else {
+                     this.$set(this.$data.errors, 'non_field_errors', ['Unknown error'])
+                 }
              })
          }
      }
@@ -131,7 +132,4 @@
 </script>
 
 <style lang="scss" scoped>
- .error-message {
-     color: red;
- }
 </style>

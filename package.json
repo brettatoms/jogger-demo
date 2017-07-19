@@ -53,8 +53,7 @@
     "vuex-persistedstate": "^2.0.0",
     "webpack": "^2.6.1",
     "webpack-bundle-tracker": "^0.2.0",
-    "webpack-merge": "^4.1.0",
-    "whatwg-fetch": "^2.0.3"
+    "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
