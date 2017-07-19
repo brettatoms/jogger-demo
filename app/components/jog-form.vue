@@ -75,10 +75,9 @@
          this.$data.jogId = this.$route.query.id
          if (this.$data.jogId) {
              // get jog details
-             const token = localStorage.getItem('token')
              fetch(`/api/jogs/${this.$data.jogId}/`, {
                  headers: {
-                     'Authorization': `Token ${token}`,
+                     'Authorization': `Token ${this.$store.state.token}`,
                  }
              }).then((response) => {
                  if (response.status !== 200) {
@@ -105,7 +104,6 @@
              this.$router.back()
          },
          save() {
-             const token = localStorage.getItem('token')
              const date = this.$data.date;
              const formattedDate  = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
              let method = 'POST'
@@ -122,7 +120,7 @@
                      time_in_seconds: this.$data.timeInSeconds
                  }),
                  headers: {
-                     'Authorization': `Token ${token}`,
+                     'Authorization': `Token ${this.$store.state.token}`,
                      'Content-Type': 'application/json'
                  }
              }).then((response) => {
