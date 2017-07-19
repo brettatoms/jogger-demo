@@ -1,6 +1,25 @@
 <template>
     <div>
-        <router-link class="clear button" to="/add" v-if="formattedJogs.length">Add Jog</router-link>
+        <div v-if="formattedJogs.length">
+                <div class="grid-x grid-padding-x">
+                    <div class="auto cell">
+                        <router-link class="clear button" to="/add">Add Jog</router-link>
+                    </div>
+                    <div class="medium-3 cell">
+                        <label class="from-label">From
+                            <input type="text" ref="fromDateInput"/>
+                            <p class="help-text"><a @click.prevent="clearFromDate()">clear</a></p>
+                        </label>
+                    </div>
+                    <div class="medium-3 cell">
+                        <label class="to-label">To
+                            <input type="text" ref="toDateInput"/>
+                            <p class="help-text"><a @click.prevent="clearToDate()">clear</a></p>
+                        </label>
+                    </div>
+                </div>
+        </div>
+
         <table class="jog-table" v-if="formattedJogs.length">
             <thead>
                 <tr>
@@ -29,21 +48,57 @@
  import moment from 'moment';
  import VueRouter from 'vue-router'
  import orderBy from 'lodash.orderby'
+ import Pikaday from 'pikaday'
 
  export default {
      data: function() {
          return {
              sortKey:  'date',
              sortAsc: true,
+             fromDate: null,
+             toDate: null
          }
      },
+
      beforeMount() {
          this.loadJogs();
+     },
+     mounted() {
+         this._fromDatePicker = new Pikaday({
+             field: this.$refs.fromDateInput,
+             format: 'YYYY-MM-DD',
+             onSelect: (date) => {
+                 this.$data.fromDate = date
+             }
+         })
+
+         this._toDatePicker = new Pikaday({
+             field: this.$refs.toDateInput,
+             format: 'YYYY-MM-DD',
+             onSelect: (date) => {
+                 this.$data.toDate = date
+             }
+         })
      },
 
      computed: {
          formattedJogs() {
-             const formattedData = this.$store.state.jogs
+             const filteredData = this.$store.state.jogs
+                 .filter((jog) => {
+                     // filter out days before fromDate
+                     const { fromDate, toDate } = this.$data;
+                     if (fromDate && moment(jog.date).isBefore(fromDate, 'day')) {
+                         return false
+                     }
+                     // filter out days after toDate
+                     if (toDate && moment(jog.date).isAfter(toDate, 'day')) {
+                         return false
+                     }
+
+                     return true;
+                 })
+
+             const formattedData = filteredData
                  .map((jog) => {
                      const averageSpeed = ((jog.distance_in_feet / 5280 ) / (jog.time_in_seconds))
                      return {
@@ -65,6 +120,14 @@
      },
 
      methods: {
+         clearFromDate() {
+             this.$data.fromDate = null
+             this._fromDatePicker.setDate(null)
+         },
+         clearToDate() {
+             this.$data.toDate = null
+             this._toDatePicker.setDate(null)
+         },
          sortBy(key) {
              const sortKey = {
                  date: 'date',
@@ -133,5 +196,12 @@
  .empty-state {
      text-align: center;
      margin: 20px;
+ }
+
+ .from-label,
+ .to-label {
+     input {
+         margin-bottom: 4px;
+     }
  }
 </style>
