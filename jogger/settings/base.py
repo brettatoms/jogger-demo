@@ -138,10 +138,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':
     ('rest_framework.authentication.TokenAuthentication', ),
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAdminUser'],
-    'PAGE_SIZE':
-    20,  # yapf: disable
-    'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', )
-}
+    'PAGE_SIZE': 20,
+    'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
+}  # yapf: disable
+
 
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
