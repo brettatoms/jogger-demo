@@ -117,7 +117,7 @@
              this.$http[method](url, {
                  date: formattedDate,
                  distance_in_feet: this.$data.distanceInFeet,
-                 time_in_seconds: this.$data.timeInMinutes / 60
+                 time_in_seconds: Math.round(this.$data.timeInMinutes / 60)
              }).then((response) => {
                  return response.json().then(data => [response, data])
              }).then((response_data) => {

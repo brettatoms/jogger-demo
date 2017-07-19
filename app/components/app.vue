@@ -22,6 +22,9 @@
                                             :to="{ path: '/users/edit', query: { id: currentUserId }}"
                                         >Profile</router-link>
                                     </li>
+                                    <li>
+                                        <router-link to="/report">Report</router-link>
+                                    </li>
                                     <li v-if="showUsersMenuItem">
                                         <router-link to="/users">Users</router-link>
                                     </li>

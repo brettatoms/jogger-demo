@@ -13,6 +13,7 @@ import JogForm from './jog-form.vue'
 import Users from './users.vue'
 import UserForm from './user-form.vue'
 import InlineErrors from './inline-errors.vue'
+import WeeklyReport from './weekly-report.vue'
 
 Vue.use(VueRouter)
 Vue.use(Vuex)
@@ -32,7 +33,8 @@ const routes = [
     { path: '/add', component: JogForm },
     { path: '/users', component: Users },
     { path: '/users/add', component: UserForm },
-    { path: '/users/edit', component: UserForm }
+    { path: '/users/edit', component: UserForm },
+    { path: '/report', component: WeeklyReport }
 ]
 
 const router = new VueRouter({ routes })
