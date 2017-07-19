@@ -22,7 +22,7 @@
                                             :to="{ path: '/users/edit', query: { id: currentUserId }}"
                                         >Profile</router-link>
                                     </li>
-                                    <li>
+                                    <li v-if="showUsersMenuItem">
                                         <router-link to="/users">Users</router-link>
                                     </li>
                                     <li><a @click="logout()">Logout</a></li>
@@ -61,6 +61,10 @@
          },
          currentUserName() {
              return this.$store.state.currentUser.username
+         },
+         showUsersMenuItem() {
+             const role = this.$store.state.currentUser.role
+             return ['manager', 'admin'].includes(role)
          }
      },
      methods: {
