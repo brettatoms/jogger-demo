@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="formattedJogs.length">
+        <div v-if="formattedJogs.length || fromDate || toDate">
                 <div class="grid-x grid-padding-x">
                     <div class="auto cell">
                         <router-link class="clear button" to="/add">Add Jog</router-link>
@@ -38,7 +38,7 @@
                 </tr>
             </tbody>
         </table>
-        <div class="empty-state" v-if="!formattedJogs.length">
+        <div class="empty-state" v-if="!formattedJogs.length && !fromDate && !toDate">
             <router-link to="/add" class="button">Add Jog</router-link>
         </div>
     </div>
