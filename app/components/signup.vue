@@ -38,6 +38,7 @@
                     v-for="msg in errors['non_field_errors']"
                     class="error-message"
                 >{{ msg }}</p>
+                <p class="error-message">{{ errors.detail }}</p>
             </div>
         </div>
     </div>
@@ -58,8 +59,11 @@
              // don't do anything if we don't have a username and password
              if (!this.$data.username || !this.$data.password1 || !this.$data.password2) return;
 
-             var form = new FormData(document.getElementById('signup-form'));
-             this.$http.post('/api/auth/register', form)
+             this.$http.post('/api/auth/register', {
+                 username: this.$data.username,
+                 password1: this.$data.password1,
+                 password2: this.$data.password2,
+             })
                  .then((response) => {
                      return response.json().then((data) => [response, data])
                  })
