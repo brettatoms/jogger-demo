@@ -25,6 +25,12 @@ class UserSerializer(ModelSerializer):
         fields = ('id', 'username', 'role')
 
 
+class UserPostSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = ('id', 'username', 'role', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+
 class LoginSerializer(rest_auth.serializers.LoginSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
