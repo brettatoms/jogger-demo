@@ -62,15 +62,16 @@ const store = new Vuex.Store({
         },
         logout(state) {
             state.token = null
+            state.users = []
+            state.currentUser = null
+            state.jogs =[]
         },
-
         setJogs(state, jogs) {
             state.jogs = jogs
         },
         addJog(state, jog) {
             state.jogs.unshift(jog)
         },
-
         addUser(state, user) {
             state.users.unshift(user)
         },
@@ -80,6 +81,11 @@ const store = new Vuex.Store({
                 Object.assign(existingUser, user)
             } else {
                 state.users.unshift(user)
+            }
+
+            // also update the current user
+            if (user.id === state.currentUser.id) {
+                Object.assign(state.currentUser, user)
             }
         },
         setUsers(state, users) {
@@ -95,7 +101,13 @@ Vue.http.interceptors.push(function(request, next) {
     }
 
     // continue to next interceptor
-    next();
+    next((response) => {
+        // if the request is unauthorized then redirect to login
+        if (response.status == 401) {
+            store.commit('logout')
+            router.replace('/login')
+        }
+    });
 });
 
 new Vue({
