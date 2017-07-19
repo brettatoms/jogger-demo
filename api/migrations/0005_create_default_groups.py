@@ -3,16 +3,27 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from django.contrib.auth.models import Group, Permission
+from django.core.management.sql import emit_post_migrate_signal
 
 
 def create_default_groups(apps, schema_editor):
+    Group = apps.get_model('auth', 'Group')
+    Permission = apps.get_model('auth', 'Permission')
+    db_alias = schema_editor.connection.alias
+
+    # emit the post migrate signal so that the permissions will be created
+    # before we run our migration, see:
+    # https://stackoverflow.com/questions/37697215/django-pytest-database-access-for-data-migration
+    emit_post_migrate_signal(2, False, db_alias)
+
     # create user manager group and default permissions
     user_manager_permissions = ['add_user', 'change_user', 'delete_user']
     user_manager_group = Group(name='User manager')
     user_manager_group.save()
-    perms = Permission.objects.filter(codename__in=user_manager_permissions)
+    perms = Permission.objects.using(db_alias).filter(
+        codename__in=user_manager_permissions)
     user_manager_group.permissions.add(*perms)
+    user_manager_group.save()
 
     # create user admin group and default permissions
     user_admin_permissions = user_manager_permissions + [
@@ -20,14 +31,15 @@ def create_default_groups(apps, schema_editor):
     ]
     user_admin_group = Group(name='User admin')
     user_admin_group.save()
-    perms = Permission.objects.filter(codename__in=user_admin_permissions)
+    perms = Permission.objects.using(db_alias).filter(
+        codename__in=user_admin_permissions)
     user_admin_group.permissions.add(*perms)
+    user_admin_group.save()
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0004_auto_20170709_1709'),
-    ]
+    dependencies = [('api', '0004_auto_20170709_1709'),
+                    ('contenttypes', '__latest__'), ('sites', '__latest__')]
 
     operations = [migrations.RunPython(create_default_groups)]
