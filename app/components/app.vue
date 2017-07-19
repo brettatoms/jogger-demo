@@ -4,7 +4,7 @@
             <div class="app-grid-cell medium-6 medium-offset-3 cell">
                 <div class="top-bar" v-if="hasToken()">
                     <div class="top-bar-left">
-                        Joggr
+                        <router-link to="/" class="title-link">Joggr</router-link>
                     </div>
                     <div class="top-bar-right">
                         <ul
@@ -96,6 +96,14 @@
      }
      .menu {
          background: white;
+     }
+ }
+
+ .title-link {
+     color: black;
+
+     &:hover {
+         color: #666;
      }
  }
 </style>
