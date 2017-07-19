@@ -1,7 +1,7 @@
 from django.db import models
-from rest_framework.serializers import ValidationError
 import django.contrib.auth as auth
 from django_extensions.db.models import TimeStampedModel
+from rest_framework.serializers import ValidationError
 
 USER_ADMIN_GROUP_NAME = 'User admin'
 USER_MANAGER_GROUP_NAME = 'User manager'
