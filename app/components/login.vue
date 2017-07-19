@@ -50,8 +50,10 @@
              // don't do anything if we don't have a username and password
              if (!this.$data.username || !this.$data.password) return;
 
-             var form = new FormData(document.getElementById('login-form'));
-             this.$http.post('/api/auth/login/', form)
+             this.$http.post('/api/auth/login/', {
+                 username: this.$data.username,
+                 password: this.$data.password
+             })
                  .then((response) => {
                      return response.json().then((data) => [response, data])
                  })
