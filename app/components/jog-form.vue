@@ -18,8 +18,7 @@
 
                     <label>Duration
                         <div class="input-group">
-                            <input class="input-group-field" type="number" name="time_in_seconds"
-                                   v-model="timeInSeconds"/>
+                            <input class="input-group-field" type="number" v-model="timeInMinutes"/>
                             <span class="input-group-label">minutes</span>
                         </div>
                         <inline-errors :errors="errors['time_in_seconds']"></inline-errors>
@@ -61,7 +60,7 @@
          return {
              jogId: null,
              date: null,
-             timeInSeconds: null,
+             timeInMinutes: null,
              distanceInFeet: null,
              errors: { },
              confirmDelete: false
@@ -90,7 +89,7 @@
 
                      return response.json().then((data) => {
                          this.$data.jogId = data.id
-                         this.$data.timeInSeconds = data.time_in_seconds
+                         this.$data.timeInMinutes = data.time_in_seconds * 60,
                          this.$data.distanceInFeet = data.distance_in_feet
                          this.$data.date = data.date
                          this._jogDatePicker.setDate(data.date)
@@ -118,7 +117,7 @@
              this.$http[method](url, {
                  date: formattedDate,
                  distance_in_feet: this.$data.distanceInFeet,
-                 time_in_seconds: this.$data.timeInSeconds
+                 time_in_seconds: this.$data.timeInMinutes / 60
              }).then((response) => {
                  return response.json().then(data => [response, data])
              }).then((response_data) => {

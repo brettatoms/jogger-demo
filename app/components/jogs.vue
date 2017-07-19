@@ -5,15 +5,17 @@
             <thead>
                 <tr>
                     <th><a @click="sortBy('date')">Date</a></th>
-                    <th><a @click="sortBy('distance')">Distance</a></th>
-                    <th><a @click="sortBy('time')">Time</a></th>
+                    <th><a @click="sortBy('distance')">Distance (feet)</a></th>
+                    <th><a @click="sortBy('time')">Time (minutes)</a></th>
+                    <th><a @click="sortBy('speed')">Avg Speed (mph)</a></th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="jog-row" v-for="jog in formattedJogs" @click="editJog(jog)">
                     <td>{{ jog.date }}</td>
-                    <td>{{ jog.distance_in_feet }}</td>
-                    <td>{{ jog.time_in_seconds }}</td>
+                    <td>{{ jog.distanceInFeet }}</td>
+                    <td>{{ jog.timeInMinutes }}</td>
+                    <td>{{ jog.averageSpeed }}</td>
                 </tr>
             </tbody>
         </table>
@@ -41,21 +43,24 @@
 
      computed: {
          formattedJogs() {
-             const direction = this.sortAsc ? ['asc', 'asc'] : ['desc', 'desc']
+             const formattedData = this.$store.state.jogs
+                 .map((jog) => {
+                     const averageSpeed = ((jog.distance_in_feet / 5280 ) / (jog.time_in_seconds))
+                     return {
+                         id: jog.id,
+                         date: moment(jog.date, 'YYYY-MM-DD').format('MMM D, YYYY'),
+                         distanceInFeet: jog.distance_in_feet,
+                         timeInMinutes: jog.time_in_seconds * 60,
+                         averageSpeed: averageSpeed.toFixed(2)
+                     }
+                 })
 
-             return orderBy(this.$store.state.jogs, (jog) => {
+             const direction = this.sortAsc ? ['asc', 'asc'] : ['desc', 'desc']
+             return orderBy(formattedData, (jog) => {
                  return this.sortKey === 'date' ?
                         new moment(jog.date, 'YYYY-MM-DD').valueOf() :
                         jog[this.sortKey]
              }, direction)
-                 .map((jog) => {
-                     return {
-                         id: jog.id,
-                         date: moment(jog.date, 'YYYY-MM-DD').format('MMM D, YYYY'),
-                         distance_in_feet: jog.distance_in_feet,
-                         time_in_seconds: jog.time_in_seconds
-                     }
-                 })
          }
      },
 
@@ -63,8 +68,9 @@
          sortBy(key) {
              const sortKey = {
                  date: 'date',
-                 distance: 'distance_in_feet',
-                 time: 'time_in_seconds'
+                 distance: 'distanceInFeet',
+                 time: 'timeInMinutes',
+                 speed: 'averageSpeed'
              }[key];
 
              // reverse the sort order if we're already sorting by this key
