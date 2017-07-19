@@ -84,7 +84,8 @@
  $top-bar-bg: #f9f9f9;
 
  .app-grid-cell {
-     border: solid 1px #ccc
+     border: solid 1px #ccc;
+     padding-bottom: 20px;
  }
 
  .top-bar {
