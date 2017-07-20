@@ -5,23 +5,23 @@
         </div>
 
         <div v-if="formattedJogs.length || fromDate || toDate">
-                <div class="grid-x grid-padding-x">
-                    <div class="auto cell">
-                        <router-link class="clear button" to="/add">Add Jog</router-link>
-                    </div>
-                    <div class="medium-3 cell">
-                        <label class="from-label">From
-                            <input type="text" ref="fromDateInput"/>
-                            <p class="help-text"><a @click.prevent="clearFromDate()">clear</a></p>
-                        </label>
-                    </div>
-                    <div class="medium-3 cell">
-                        <label class="to-label">To
-                            <input type="text" ref="toDateInput"/>
-                            <p class="help-text"><a @click.prevent="clearToDate()">clear</a></p>
-                        </label>
-                    </div>
+            <div class="grid-x grid-padding-x">
+                <div class="auto cell">
+                    <router-link class="clear button" to="/add">Add Jog</router-link>
                 </div>
+                <div class="medium-3 cell">
+                    <label class="from-label">From
+                        <input type="text" name="fromDate" ref="fromDateInput"/>
+                        <p class="help-text"><a @click.prevent="clearFromDate()">clear</a></p>
+                    </label>
+                </div>
+                <div class="medium-3 cell">
+                    <label class="to-label">To
+                        <input type="text" name="toDate" ref="toDateInput"/>
+                        <p class="help-text"><a @click.prevent="clearToDate()">clear</a></p>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <inline-errors :errors="[errors.detail]"></inline-errors>
@@ -71,6 +71,12 @@
 
      beforeMount() {
          const userId = this.$route.query.user_id
+
+         // if we already have jogs in the store then start with those
+         if (this.$store.state.jogs.length) {
+             this.$data.jogs = this.$store.state.jogs
+         }
+
          this.loadJogs(userId)
              .then((jogs) => {
                  if (!userId) {
@@ -80,9 +86,13 @@
                      this.$data.jogs = jogs
                  }
              })
+            .catch((err) => console.error(err))
+
      },
 
      mounted() {
+         // TODO: we should watch for the date inputs to be available
+         // before we init pikaday
          this._fromDatePicker = new Pikaday({
              field: this.$refs.fromDateInput,
              format: 'YYYY-MM-DD',
