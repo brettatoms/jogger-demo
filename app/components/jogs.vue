@@ -73,9 +73,9 @@
          const userId = this.$route.query.user_id
 
          // if we already have jogs in the store then start with those
-         if (this.$store.state.jogs.length) {
-             this.$data.jogs = this.$store.state.jogs
-         }
+         /* if (this.$store.state.jogs.length) {*/
+         /* this.$data.jogs = this.$store.state.jogs*/
+         /* }*/
 
          this.loadJogs(userId)
              .then((jogs) => {
