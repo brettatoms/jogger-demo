@@ -4,10 +4,10 @@
             You are currently viewing the jogs for <b>{{ otherUser.username }}</b>
         </div>
 
-        <div v-if="formattedJogs.length || fromDate || toDate">
+        <div v-show="formattedJogs.length || fromDate || toDate">
             <div class="grid-x grid-padding-x">
                 <div class="auto cell">
-                    <router-link class="clear button" to="/add">Add Jog</router-link>
+                    <router-link class="add-jog-button button" to="/add">Add Jog</router-link>
                 </div>
                 <div class="medium-3 cell">
                     <label class="from-label">From
@@ -241,5 +241,9 @@
 
  .warning {
      background:  #fff3d9;
+ }
+
+ .add-jog-button {
+     margin-top: 16px;
  }
 </style>

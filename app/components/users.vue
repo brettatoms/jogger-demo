@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link class="clear button" to="/users/add" v-if="users.length">Add User</router-link>
+        <router-link class="add-user-button button" to="/users/add" v-if="users.length">Add User</router-link>
         <table class="user-table" v-if="users.length">
             <thead>
                 <tr>
@@ -117,5 +117,10 @@
  .empty-state {
      text-align: center;
      margin: 20px;
+ }
+
+ .add-user-button {
+     margin-top: 16px;
+     margin-left: 10px;
  }
 </style>
