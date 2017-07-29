@@ -97,6 +97,24 @@ def test_post_jog(api_client):
     assert response_data['time_in_seconds'] == data['time_in_seconds']
 
 
+def test_post_jog_as_admin(api_client, admin_user, user2):
+    today = date.today()
+    data = {
+        'date': '{}-{}-{}'.format(today.year, today.month, today.day),
+        'distance_in_feet': randint(1, 1000),
+        'time_in_seconds': randint(1, 1000)
+    }
+    # create jog for other user
+    response = api_client.post(
+        '/api/users/{}/jogs/'.format(user2.id), data=data, format='json')
+    response_data = json.loads(response.content)
+    assert response.status_code == 201, response_data
+    assert isinstance(response_data['id'], int)
+    assert response_data['distance_in_feet'] == data['distance_in_feet']
+    assert response_data['time_in_seconds'] == data['time_in_seconds']
+    assert Jog.objects.get(id=response_data['id']).user.id == user2.id
+
+
 def test_put_jog(api_client, jog):
     today = date.today()
     data = {

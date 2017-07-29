@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
 
-from ..models import Jog
+from ..models import Jog, User
 from ..serializers import JogSerializer
 
 
@@ -39,14 +39,18 @@ class JogList(APIView):
 
     def get(self, request, user_id=None):
         # get jogs for current user
-        jogs = Jog.objects.filter(user=request.user)
+        user = request.user if user_id is None else User.objects.get(
+            pk=user_id)
+        jogs = Jog.objects.filter(user=user)
         serializer = JogSerializer(jogs, many=True)
         return Response(serializer.data)
 
     def post(self, request, user_id=None):
         serializer = JogSerializer(data=request.data)
+        user = request.user if user_id is None else User.objects.get(
+            pk=user_id)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
