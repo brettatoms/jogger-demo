@@ -1,8 +1,11 @@
 <template>
     <div class="grid-container">
         <div class="grid-x">
-            <div class="app-grid-cell medium-6 medium-offset-3 cell">
-                <top-bar></top-bar>
+            <div class="medium-2 medium-offset-1 large-2 large-offset-1 cell">
+                <side-bar></side-bar>
+            </div>
+            <div class="app-grid-cell small-12 medium-6 large-6 cell">
+                <!-- <top-bar></top-bar> -->
                 <router-view :key="$route.fullPath"></router-view>
             </div>
         </div>

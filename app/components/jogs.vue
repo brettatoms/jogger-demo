@@ -7,7 +7,7 @@
         <div v-show="formattedJogs.length || fromDate || toDate">
             <div class="grid-x grid-padding-x">
                 <div class="auto cell">
-                    <router-link class="add-jog-button button" to="/add">Add Jog</router-link>
+                    <!-- <router-link class="add-jog-button button" :to="'/add?userId=' + userId">Add Jog</router-link> -->
                 </div>
                 <div class="medium-3 cell">
                     <label class="from-label">From

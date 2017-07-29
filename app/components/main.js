@@ -15,6 +15,7 @@ import UserForm from './user-form.vue'
 import InlineErrors from './inline-errors.vue'
 import WeeklyReport from './weekly-report.vue'
 import TopBar from './top-bar.vue'
+import SideBar from './side-bar.vue'
 
 Vue.use(VueRouter)
 Vue.use(Vuex)
@@ -23,6 +24,7 @@ Vue.use(VueResource)
 // register global components
 Vue.component('inline-errors', InlineErrors)
 Vue.component('top-bar', TopBar)
+Vue.component('side-bar', SideBar)
 
 toastr.options.closeButton = true
 toastr.options.positionClass = 'toast-top-center'
